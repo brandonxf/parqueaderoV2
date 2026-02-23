@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary - Deep Blue */
+    --primary: 220 85% 45%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary - Slate */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 25% 15%;
+    
+    /* Accent - Emerald */
+    --accent: 165 70% 40%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Background - Off-white with blue tint */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 12%;
+    
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 12%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 12%;
+    
+    /* Muted */
+    --muted: 210 15% 94%;
+    --muted-foreground: 215 10% 45%;
+    
+    /* Destructive - Red */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Border */
+    --border: 210 15% 85%;
+    --input: 210 15% 85%;
+    --ring: 220 85% 45%;
+    
+    /* Success - Green */
+    --success: 150 60% 38%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Warning - Amber */
+    --warning: 38 90% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    /* Chart colors */
+    --chart-1: 220 85% 45%;
+    --chart-2: 165 70% 40%;
+    --chart-3: 38 90% 50%;
+    --chart-4: 270 60% 55%;
+    --chart-5: 0 70% 50%;
+    
+    /* Sidebar - Dark blue */
+    --sidebar-background: 220 30% 10%;
+    --sidebar-foreground: 210 15% 90%;
+    --sidebar-primary: 220 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 25% 18%;
+    --sidebar-accent-foreground: 210 15% 90%;
+    --sidebar-border: 220 25% 20%;
+    --sidebar-ring: 220 85% 55%;
+    
+    /* Radius */
+    --radius: 0.75rem;
+  }
+
+  /* Dark mode */
+  .dark {
+    --background: 220 20% 8%;
+    --foreground: 210 10% 90%;
+    
+    --card: 220 15% 12%;
+    --card-foreground: 210 10% 90%;
+    
+    --popover: 220 15% 12%;
+    --popover-foreground: 210 10% 90%;
+    
+    --primary: 220 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 210 10% 90%;
+    
+    --muted: 220 15% 18%;
+    --muted-foreground: 215 10% 60%;
+    
+    --accent: 165 70% 45%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 220 85% 60%;
+    
+    --success: 150 60% 42%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 90% 55%;
+    --warning-foreground: 0 0% 100%;
+    
+    --chart-1: 220 85% 60%;
+    --chart-2: 165 70% 45%;
+    --chart-3: 38 90% 55%;
+    --chart-4: 270 60% 60%;
+    --chart-5: 0 60% 45%;
+    
+    --sidebar-background: 220 25% 6%;
+    --sidebar-foreground: 210 10% 85%;
+    --sidebar-primary: 220 85% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 12%;
+    --sidebar-accent-foreground: 210 10% 85%;
+    --sidebar-border: 220 20% 15%;
+    --sidebar-ring: 220 85% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  }
+  
+  /* Glass effect */
+  .glass {
+    @apply backdrop-blur-lg;
+    background: hsl(var(--card) / 0.8);
+  }
+  
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .card-hover:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+  }
+  
+  /* Animated gradient background */
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 8s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  /* Pulse animation for notifications */
+  .pulse-dot {
+    @apply relative;
+  }
+  
+  .pulse-dot::after {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+}
