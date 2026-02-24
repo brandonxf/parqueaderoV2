@@ -5,53 +5,46 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Función para obtener la fecha y hora actual en zona horaria de Colombia (America/Bogota, UTC-5)
-function getColombiaDate(date: Date | string): Date {
-  const inputDate = typeof date === 'string' ? new Date(date) : date
-  // La base de datos guarda en UTC, restamos 5 horas para obtener hora de Colombia
-  const colombiaOffset = 5 * 60 * 60 * 1000 // 5 horas en milisegundos
-  return new Date(inputDate.getTime() - colombiaOffset)
+function parseDate(date: Date | string): Date | null {
+  const d = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(d.getTime())) return null
+  return d
 }
 
 // Obtener fecha actual en formato YYYY-MM-DD para la zona horaria de Colombia
 export function getColombiaToday(): string {
-  const now = new Date()
-  const colombiaOffset = 5 * 60 * 60 * 1000
-  const colombiaDate = new Date(now.getTime() - colombiaOffset)
-  return colombiaDate.toISOString().split("T")[0]
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
 }
 
 export function formatTime(dateStr: string): string {
-  const date = getColombiaDate(dateStr)
-  const hours = date.getHours().toString().padStart(2, "0")
-  const minutes = date.getMinutes().toString().padStart(2, "0")
-  return `${hours}:${minutes}`
+  const d = parseDate(dateStr)
+  if (!d) return ''
+  return new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit', hour12: false }).format(d)
 }
 
 export function formatDate(dateStr: string): string {
-  const date = getColombiaDate(dateStr)
-  const year = date.getFullYear()
-  const month = (date.getMonth() + 1).toString().padStart(2, "0")
-  const day = date.getDate().toString().padStart(2, "0")
+  const d = parseDate(dateStr)
+  if (!d) return ''
+  const parts = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: 'numeric' }).formatToParts(d)
+  const day = parts.find(p => p.type === 'day')?.value ?? ''
+  const month = parts.find(p => p.type === 'month')?.value ?? ''
+  const year = parts.find(p => p.type === 'year')?.value ?? ''
   return `${day}/${month}/${year}`
 }
 
 export function formatDateTime(dateStr: string): string {
-  const date = getColombiaDate(dateStr)
-  const year = date.getFullYear()
-  const month = (date.getMonth() + 1).toString().padStart(2, "0")
-  const day = date.getDate().toString().padStart(2, "0")
-  const hours = date.getHours().toString().padStart(2, "0")
-  const minutes = date.getMinutes().toString().padStart(2, "0")
-  return `${day}/${month}/${year} ${hours}:${minutes}`
+  const d = parseDate(dateStr)
+  if (!d) return ''
+  const dateParts = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: 'numeric' }).formatToParts(d)
+  const time = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit', hour12: false }).format(d)
+  const day = dateParts.find(p => p.type === 'day')?.value ?? ''
+  const month = dateParts.find(p => p.type === 'month')?.value ?? ''
+  const year = dateParts.find(p => p.type === 'year')?.value ?? ''
+  return `${day}/${month}/${year} ${time}`
 }
 
 export function formatShortDate(dateStr: string): string {
-  const date = getColombiaDate(dateStr)
-  const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
-  const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
-  const dayName = days[date.getDay()]
-  const day = date.getDate().toString().padStart(2, "0")
-  const monthName = months[date.getMonth()]
-  return `${dayName}, ${day} ${monthName}`
+  const d = parseDate(dateStr)
+  if (!d) return ''
+  return new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', weekday: 'short', day: '2-digit', month: 'short' }).format(d)
 }
