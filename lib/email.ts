@@ -5,7 +5,8 @@ import { toLocalDate } from '@/lib/time'
 
 const defaultClient = SibApiV3Sdk.ApiClient.instance
 const apiKeyAuth = defaultClient.authentications['api-key']
-apiKeyAuth.apiKey = process.env.BREVO_API_KEY || ''
+const brevoKey = process.env.BREVO_KEY || process.env.BREVO_API_KEY || ''
+apiKeyAuth.apiKey = brevoKey
 const brevo = new SibApiV3Sdk.TransactionalEmailsApi()
 
 // Si están configuradas las credenciales SMTP, crear un transporter de nodemailer
@@ -146,7 +147,7 @@ export async function sendEntryTicket(email: string, ticketData: any) {
 </html>
 `
 
-    const senderEmail = process.env.EMAIL_FROM || 'no-reply@parkcontrol.example'
+    const senderEmail = process.env.EMAIL_SENDER || process.env.EMAIL_FROM || 'no-reply@parkcontrol.example'
 
     if (smtpTransport) {
       await smtpTransport.sendMail({
@@ -310,7 +311,7 @@ export async function sendExitTicket(email: string, exitData: any) {
 </html>
 `
 
-    const senderEmail = process.env.EMAIL_FROM || 'no-reply@parkcontrol.example'
+    const senderEmail = process.env.EMAIL_SENDER || process.env.EMAIL_FROM || 'no-reply@parkcontrol.example'
     if (smtpTransport) {
       await smtpTransport.sendMail({
         from: `ParkControl <${senderEmail}>`,

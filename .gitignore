@@ -7,6 +7,7 @@ __v0_jsx-dev-runtime.ts
 node_modules/
 .next/
 .env*.local
+# Ignorar archivo de variables de entorno local
 .env
 .DS_Store
 *.zip
