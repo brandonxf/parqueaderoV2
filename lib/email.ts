@@ -1,4 +1,5 @@
 import SibApiV3Sdk from 'sib-api-v3-sdk'
+import nodemailer from 'nodemailer'
 import QRCode from 'qrcode'
 import { toLocalDate } from '@/lib/time'
 
@@ -6,6 +7,25 @@ const defaultClient = SibApiV3Sdk.ApiClient.instance
 const apiKeyAuth = defaultClient.authentications['api-key']
 apiKeyAuth.apiKey = process.env.BREVO_API_KEY || ''
 const brevo = new SibApiV3Sdk.TransactionalEmailsApi()
+
+// Si están configuradas las credenciales SMTP, crear un transporter de nodemailer
+const smtpHost = process.env.SMTP_HOST || process.env.BREVO_SMTP_HOST || process.env.SMTP_SERVER
+const smtpPort = process.env.SMTP_PORT || process.env.BREVO_SMTP_PORT || '587'
+const smtpUser = process.env.SMTP_USER || process.env.BREVO_SMTP_USER || process.env.SMTP_IDENTIFICADORA
+const smtpPass = process.env.SMTP_PASS || process.env.BREVO_SMTP_PASS || process.env.SMTP_PASSWORD
+
+let smtpTransport: nodemailer.Transporter | null = null
+if (smtpHost && smtpUser && smtpPass) {
+  smtpTransport = nodemailer.createTransport({
+    host: smtpHost,
+    port: Number(smtpPort),
+    secure: Number(smtpPort) === 465,
+    auth: {
+      user: smtpUser,
+      pass: smtpPass,
+    }
+  })
+}
 
 // Professional email templates for ParkControl
 
@@ -126,22 +146,38 @@ export async function sendEntryTicket(email: string, ticketData: any) {
 </html>
 `
 
-    const qrBase64 = qrBuffer.toString('base64')
     const senderEmail = process.env.EMAIL_FROM || 'no-reply@parkcontrol.example'
 
-    const sendSmtpEmail = new SibApiV3Sdk.SendTransacEmail()
-    sendSmtpEmail.sender = { name: 'ParkControl', email: senderEmail }
-    sendSmtpEmail.to = [{ email }]
-    sendSmtpEmail.subject = '🅿️ Confirmación de Ingreso - ParkControl'
-    sendSmtpEmail.htmlContent = html
-    sendSmtpEmail.attachment = [
-      {
-        name: 'codigo-qr.png',
-        content: qrBase64
-      }
-    ]
+    if (smtpTransport) {
+      await smtpTransport.sendMail({
+        from: `ParkControl <${senderEmail}>`,
+        to: email,
+        subject: '🅿️ Confirmación de Ingreso - ParkControl',
+        html,
+        attachments: [
+          {
+            filename: 'codigo-qr.png',
+            content: qrBuffer,
+            contentType: 'image/png'
+          }
+        ]
+      })
+    } else {
+      const qrBase64 = qrBuffer.toString('base64')
+      const sendSmtpEmail = new SibApiV3Sdk.SendTransacEmail()
+      sendSmtpEmail.sender = { name: 'ParkControl', email: senderEmail }
+      sendSmtpEmail.to = [{ email }]
+      sendSmtpEmail.subject = '🅿️ Confirmación de Ingreso - ParkControl'
+      sendSmtpEmail.htmlContent = html
+      sendSmtpEmail.attachment = [
+        {
+          name: 'codigo-qr.png',
+          content: qrBase64
+        }
+      ]
 
-    await brevo.sendTransacEmail(sendSmtpEmail)
+      await brevo.sendTransacEmail(sendSmtpEmail)
+    }
     console.log('Email de entrada enviado a:', email)
   } catch (error) {
     console.error('Error sending entry email:', error)
@@ -275,13 +311,22 @@ export async function sendExitTicket(email: string, exitData: any) {
 `
 
     const senderEmail = process.env.EMAIL_FROM || 'no-reply@parkcontrol.example'
-    const sendSmtpEmail = new SibApiV3Sdk.SendTransacEmail()
-    sendSmtpEmail.sender = { name: 'ParkControl', email: senderEmail }
-    sendSmtpEmail.to = [{ email }]
-    sendSmtpEmail.subject = '🧾 Ticket de Salida - ParkControl'
-    sendSmtpEmail.htmlContent = html
+    if (smtpTransport) {
+      await smtpTransport.sendMail({
+        from: `ParkControl <${senderEmail}>`,
+        to: email,
+        subject: '🧾 Ticket de Salida - ParkControl',
+        html
+      })
+    } else {
+      const sendSmtpEmail = new SibApiV3Sdk.SendTransacEmail()
+      sendSmtpEmail.sender = { name: 'ParkControl', email: senderEmail }
+      sendSmtpEmail.to = [{ email }]
+      sendSmtpEmail.subject = '🧾 Ticket de Salida - ParkControl'
+      sendSmtpEmail.htmlContent = html
 
-    await brevo.sendTransacEmail(sendSmtpEmail)
+      await brevo.sendTransacEmail(sendSmtpEmail)
+    }
     console.log('Email de salida enviado a:', email)
   } catch (error) {
     console.error('Error sending exit email:', error)
