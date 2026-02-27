@@ -12,8 +12,8 @@ const brevo = new SibApiV3Sdk.TransactionalEmailsApi()
 // Si están configuradas las credenciales SMTP, crear un transporter de nodemailer
 const smtpHost = process.env.SMTP_HOST || process.env.BREVO_SMTP_HOST || process.env.SMTP_SERVER
 const smtpPort = process.env.SMTP_PORT || process.env.BREVO_SMTP_PORT || '587'
-const smtpUser = process.env.SMTP_USER || process.env.BREVO_SMTP_USER || process.env.SMTP_IDENTIFICADORA
-const smtpPass = process.env.SMTP_PASS || process.env.BREVO_SMTP_PASS || process.env.SMTP_PASSWORD
+const smtpUser = process.env.SMTP_USERNAME || process.env.SMTP_USER || process.env.BREVO_SMTP_USER || process.env.SMTP_IDENTIFICADORA
+const smtpPass = process.env.SMTP_PASSWORD || process.env.SMTP_PASS || process.env.BREVO_SMTP_PASS || process.env.SMTP_PASSWORD
 
 let smtpTransport: nodemailer.Transporter | null = null
 if (smtpHost && smtpUser && smtpPass) {

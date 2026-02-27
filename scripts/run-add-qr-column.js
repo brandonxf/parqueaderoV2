@@ -1,6 +1,6 @@
 import { neon } from "@neondatabase/serverless";
 
-const sql = neon(process.env.DATABASE_URL);
+const sql = neon(process.env.APP_DATABASE_URL || process.env.DATABASE_URL);
 
 async function main() {
   console.log("Adding qr_code_data column to tickets table...");

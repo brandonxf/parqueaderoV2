@@ -1108,7 +1108,7 @@ E. .env.local (no incluido en repo)
 
 Variables de entorno (privadas):
 
-DATABASE_URL=postgresql://user:password@host/dbname
+APP_DATABASE_URL=postgresql://user:password@host/dbname
 
 Nota: El archivo .env.local NO debe estar en git
 
@@ -1137,7 +1137,7 @@ PASOS DE INSTALACIÓN:
    pnpm install
 
 3. Crear archivo .env.local
-   DATABASE_URL=postgresql://...
+   APP_DATABASE_URL=postgresql://...
 
 4. Ejecutar migrations en la base de datos
    node scripts/run-migration.js

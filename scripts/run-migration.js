@@ -1,10 +1,10 @@
 import { neon } from "@neondatabase/serverless";
 
 async function runMigration() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.APP_DATABASE_URL || process.env.DATABASE_URL;
 
   if (!connectionString) {
-    console.error("DATABASE_URL no configurado");
+    console.error("APP_DATABASE_URL no configurado");
     process.exit(1);
   }
 
